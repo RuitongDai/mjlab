@@ -15,12 +15,8 @@ from mjlab.utils.spec_config import CollisionCfg
 # MJCF and assets.
 ##
 
-F1_XML: Path = (
-  MJLAB_SRC_PATH / "asset_zoo" / "robots" / "f1" / "xmls" / "f1_1.xml"
-)
-CHAIR_XML: Path = (
-  MJLAB_SRC_PATH / "asset_zoo" / "robots" / "f1" / "xmls" / "chair.xml"
-)
+F1_XML: Path = MJLAB_SRC_PATH / "asset_zoo" / "robots" / "f1" / "xmls" / "f1_1.xml"
+CHAIR_XML: Path = MJLAB_SRC_PATH / "asset_zoo" / "robots" / "f1" / "xmls" / "chair.xml"
 assert F1_XML.exists()
 assert CHAIR_XML.exists()
 
@@ -29,9 +25,11 @@ def get_spec() -> mujoco.MjSpec:
   # Empty spec.assets: MuJoCo resolves mesh files from disk (mjlab #873).
   return mujoco.MjSpec.from_file(str(F1_XML))
 
+
 def get_chair_spec() -> mujoco.MjSpec:
   """Load and return a MuJoCo MjSpec for the 40 cm chair."""
   return mujoco.MjSpec.from_file(str(CHAIR_XML))
+
 
 F1_ACTUATOR_LEGS = BuiltinPositionActuatorCfg(
   target_names_expr=(".*_hip_yaw_joint", ".*_hip_roll_joint", ".*_knee_joint"),
@@ -58,7 +56,7 @@ F1_ACTUATOR_FEET = BuiltinPositionActuatorCfg(
 )
 
 F1_ACTUATOR_WAIST = BuiltinPositionActuatorCfg(
-  target_names_expr=( "waist_yaw_joint","waist_roll_joint"),
+  target_names_expr=("waist_yaw_joint", "waist_roll_joint"),
   stiffness=100.0,
   damping=2.0,
   effort_limit=50.0,
@@ -200,6 +198,8 @@ F1_ARTICULATION = EntityArticulationInfoCfg(
   ),
   soft_joint_pos_limit_factor=0.9,
 )
+
+
 def get_f1_robot_cfg() -> EntityCfg:
   """Get a fresh F1 robot configuration instance."""
   # from wbc_mjlab.robots.f1.actuators import F1_ARTICULATION
@@ -210,6 +210,7 @@ def get_f1_robot_cfg() -> EntityCfg:
     spec_fn=get_spec,
     articulation=F1_ARTICULATION,
   )
+
 
 def get_chair_cfg() -> EntityCfg:
   """Return a fresh fixed-base 40 cm chair configuration."""

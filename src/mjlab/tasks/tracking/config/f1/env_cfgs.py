@@ -22,9 +22,10 @@ def f1_flat_tracking_env_cfg(
   """Create f1 flat terrain tracking configuration."""
   cfg = make_tracking_env_cfg()
 
-  cfg.scene.entities = {"robot": get_f1_robot_cfg(),
-                        "chair": get_chair_cfg(),
-                        }
+  cfg.scene.entities = {
+    "robot": get_f1_robot_cfg(),
+    "chair": get_chair_cfg(),
+  }
 
   # 关闭自碰撞惩罚，避免坐姿/起身初期产生巨大负奖励。
   cfg.rewards.pop("self_collisions", None)

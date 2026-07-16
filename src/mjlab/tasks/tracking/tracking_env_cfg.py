@@ -250,7 +250,6 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
       weight=-10.0,
       params={"sensor_name": "self_collision", "force_threshold": 10.0},
     ),
-
     "motion_anchor_height": RewardTermCfg(
       func=mdp.motion_anchor_height_error_exp,
       weight=3.0,

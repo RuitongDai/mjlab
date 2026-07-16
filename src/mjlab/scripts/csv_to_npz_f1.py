@@ -499,12 +499,8 @@ def run_sim(
     log["joint_vel"].append(robot.data.joint_vel[0].cpu().numpy().copy())
     log["body_pos_w"].append(robot.data.body_link_pos_w[0].cpu().numpy().copy())
     log["body_quat_w"].append(robot.data.body_link_quat_w[0].cpu().numpy().copy())
-    log["body_lin_vel_w"].append(
-      robot.data.body_link_lin_vel_w[0].cpu().numpy().copy()
-    )
-    log["body_ang_vel_w"].append(
-      robot.data.body_link_ang_vel_w[0].cpu().numpy().copy()
-    )
+    log["body_lin_vel_w"].append(robot.data.body_link_lin_vel_w[0].cpu().numpy().copy())
+    log["body_ang_vel_w"].append(robot.data.body_link_ang_vel_w[0].cpu().numpy().copy())
 
     # 根刚体的速度应与写入的根节点速度一致。
     torch.testing.assert_close(

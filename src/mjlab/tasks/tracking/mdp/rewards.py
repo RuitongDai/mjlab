@@ -134,6 +134,7 @@ def self_collision_cost(
   assert data.found is not None
   return data.found.squeeze(-1)
 
+
 # 新增
 def motion_anchor_height_error_exp(
   env: ManagerBasedRlEnv,
@@ -148,6 +149,7 @@ def motion_anchor_height_error_exp(
   command = cast(MotionCommand, env.command_manager.get_term(command_name))
   error = torch.square(command.anchor_pos_w[:, 2] - command.robot_anchor_pos_w[:, 2])
   return torch.exp(-error / std**2)
+
 
 def motion_joint_position_error_exp(
   env: ManagerBasedRlEnv,
