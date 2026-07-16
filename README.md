@@ -68,8 +68,8 @@ uv run play Mjlab-Velocity-Flat-Unitree-G1 --wandb-run-path your-org/mjlab/run-i
 Train a humanoid to mimic reference motions. See the [motion imitation guide](https://mujocolab.github.io/mjlab/main/source/training/motion_imitation.html) for preprocessing setup.
 
 ```bash
-uv run python -m mjlab.scripts.train Mjlab-Tracking-SitToStand-F1 --env.commands.motion.motion-file datasets/npz/standup.npz --env.scene.num-envs 4096
-uv run python -m mjlab.scripts.play Mjlab-Tracking-SitToStand-F1 --agent trained --checkpoint-file  --motion-file datasets/npz/standup.npz --num-envs 1 --viewer native
+uv run python -m mjlab.scripts.train Mjlab-Tracking-Flat-F1 --env.commands.motion.motion-file datasets/npz/standup.npz --env.scene.num-envs 4096
+uv run python -m mjlab.scripts.play Mjlab-Tracking-Flat-F1 --agent trained --checkpoint-file  --motion-file datasets/npz/standup.npz --num-envs 1 --viewer native
 ```
 
 ### 3. Sanity-check with Dummy Agents
