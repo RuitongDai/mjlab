@@ -77,7 +77,7 @@ uv run play Mjlab-Tracking-Flat-Unitree-G1 --wandb-run-path your-org/mjlab/run-i
 Use built-in agents to sanity check your MDP before training:
 
 ```bash
-uv run play Mjlab-Your-Task-Id --agent zero  # Sends zero actions
+uv run play Mjlab-Tracking-Flat-F1 --agent zero --motion-file datasets/npz/standup.npz --viewer native --no-terminations True
 uv run play Mjlab-Your-Task-Id --agent random  # Sends uniform random actions
 ```
 

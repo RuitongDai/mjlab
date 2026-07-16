@@ -1,0 +1,21 @@
+<mujoco model="x3f2_chair">
+  <compiler angle="radian" autolimits="true"/>
+
+  <default>
+    <geom contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001"/>
+  </default>
+
+  <asset>
+    <material name="chair_seat" rgba="0.45 0.36 0.28 1"/>
+    <material name="chair_frame" rgba="0.18 0.18 0.18 1"/>
+  </asset>
+
+  <worldbody>
+
+    <body name="chair" pos="0 0.03 0" quat="0.7071068 0 0 0.7071068">
+      <geom name="seat" type="box" size="0.3 0.20 0.02" pos="0 0 0.43" material="chair_seat"/>
+      <geom name="back_rest" type="box" size="0.025 0.22 0.28" pos="-0.22 0 0.64" material="chair_seat"/>
+    </body>
+
+  </worldbody>
+</mujoco>

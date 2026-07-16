@@ -16,3 +16,14 @@ from mjlab.asset_zoo.robots.unitree_go1.go1_constants import (
 from mjlab.asset_zoo.robots.unitree_go1.go1_constants import (
   get_go1_robot_cfg as get_go1_robot_cfg,
 )
+
+
+from mjlab.asset_zoo.robots.f1.f1_constants import (
+  F1_ACTION_SCALE as F1_ACTION_SCALE,
+)
+from mjlab.asset_zoo.robots.f1.f1_constants import (
+  get_f1_robot_cfg as get_f1_robot_cfg,
+)
+from mjlab.asset_zoo.robots.f1.f1_constants import (
+  get_chair_cfg as get_chair_cfg,
+)

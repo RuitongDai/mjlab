@@ -133,3 +133,32 @@ def self_collision_cost(
     return hit.sum(dim=-1).float()  # [B]
   assert data.found is not None
   return data.found.squeeze(-1)
+
+# 新增
+def motion_anchor_height_error_exp(
+  env: ManagerBasedRlEnv,
+  command_name: str,
+  std: float,
+) -> torch.Tensor:
+  """Reward tracking the reference anchor height.
+
+  用 torso/anchor 的 z 高度跟踪参考动作的 z 高度。
+  对 sit-to-stand 很关键，因为站起来最直接的信号就是 torso 高度上升。
+  """
+  command = cast(MotionCommand, env.command_manager.get_term(command_name))
+  error = torch.square(command.anchor_pos_w[:, 2] - command.robot_anchor_pos_w[:, 2])
+  return torch.exp(-error / std**2)
+
+def motion_joint_position_error_exp(
+  env: ManagerBasedRlEnv,
+  command_name: str,
+  std: float,
+) -> torch.Tensor:
+  """跟踪参考动作的关节角。
+
+  sit-to-stand 里髋/膝/踝是否跟上参考动作非常关键。
+  这个 reward 直接惩罚 robot joint pos 和 motion joint pos 的差距。
+  """
+  command = cast(MotionCommand, env.command_manager.get_term(command_name))
+  error = torch.mean(torch.square(command.joint_pos - command.robot_joint_pos), dim=-1)
+  return torch.exp(-error / std**2)
