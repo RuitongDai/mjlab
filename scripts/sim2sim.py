@@ -259,7 +259,7 @@ class F1Sim2Sim:
 
   def _term_with_history(self, name: str, value: np.ndarray) -> np.ndarray:
     value = value.astype(np.float32, copy=False).reshape(-1)
-    if name not in self.term_history:
+    if name not in  self.term_history:
       self.term_history[name] = deque(
         (value.copy() for _ in range(self.history_length)),
         maxlen=self.history_length,
