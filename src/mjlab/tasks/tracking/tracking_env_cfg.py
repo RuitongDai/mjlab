@@ -50,7 +50,6 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
     ),
     "projected_gravity": ObservationTermCfg(
       func=mdp.projected_gravity,
-      params={"command_name": "motion"},
       noise=Unoise(n_min=-0.05, n_max=0.05),
     ),
     "base_ang_vel": ObservationTermCfg(
@@ -75,7 +74,6 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
     ),
     "projected_gravity": ObservationTermCfg(
       func=mdp.projected_gravity,
-      params={"command_name": "motion"},
     ),
     "motion_anchor_pos_b": ObservationTermCfg(
       func=mdp.motion_anchor_pos_b, params={"command_name": "motion"}
