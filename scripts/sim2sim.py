@@ -5,6 +5,10 @@
 运动帧。本脚本利用这些内嵌的参考帧重建 actor 观测，并在独立的 MuJoCo
 仿真中执行位置目标。
 
+当前 Actor 的单帧观测顺序为：
+``command``、``projected_gravity``、``base_ang_vel``、``joint_pos``、
+``joint_vel``、``actions``。每项保留 5 帧历史，最终观测维度为 730。
+
 示例：
   uv run scripts/sim2sim.py \
     logs/rsl_rl/f1_sit_to_stand_tracking/2026-07-16_15-19-54/2026-07-16_15-19-54.onnx
@@ -29,10 +33,23 @@ from mjlab.scene import Scene, SceneCfg
 from mjlab.terrains import TerrainEntityCfg
 
 DEFAULT_ONNX = Path(
-  "logs/rsl_rl/f1_sit_to_stand_tracking/2026-07-16_15-19-54/2026-07-16_15-19-54.onnx"
+  "logs/rsl_rl/f1_sit_to_stand_tracking/20000/2026-07-16_20-00-57.onnx"
 )
 
 ROBOT_PREFIX = "robot/"
+
+HISTORY_LENGTH = 5
+ACTOR_OBSERVATION_NAMES = (
+  "command",
+  "projected_gravity",
+  "base_ang_vel",
+  "joint_pos",
+  "joint_vel",
+  "actions",
+)
+# 单帧维度：56 + 3 + 3 + 28 + 28 + 28 = 146。
+ACTOR_OBSERVATION_DIM = 146 * HISTORY_LENGTH
+GRAVITY_VECTOR_W = np.array([0.0, 0.0, -1.0], dtype=np.float32)
 
 
 def _csv_str(value: str) -> list[str]:
@@ -142,13 +159,22 @@ class F1Sim2Sim:
         "action_scale",
         "anchor_body_name",
         "body_names",
+        "observation_names",
       ),
     )
     self.joint_names = _csv_str(self.metadata["joint_names"])
     self.body_names = _csv_str(self.metadata["body_names"])
     self.default_joint_pos = _csv_float(self.metadata["default_joint_pos"])
     self.action_scale = _csv_float(self.metadata["action_scale"])
-    self.history_length = 5
+    self.observation_names = _csv_str(self.metadata["observation_names"])
+    if tuple(self.observation_names) != ACTOR_OBSERVATION_NAMES:
+      raise ValueError(
+        "ONNX Actor 观测顺序与当前 Sim2Sim 脚本不一致。\n"
+        f"脚本要求: {list(ACTOR_OBSERVATION_NAMES)}\n"
+        f"ONNX 实际: {self.observation_names}"
+      )
+
+    self.history_length = HISTORY_LENGTH
     self.last_action = np.zeros(len(self.joint_names), dtype=np.float32)
     self.term_history: dict[str, deque[np.ndarray]] = {}
 
@@ -157,6 +183,14 @@ class F1Sim2Sim:
     self.input_names = [inp.name for inp in self.session.get_inputs()]
     if self.input_names != ["obs", "time_step"]:
       raise ValueError(f"ONNX 输入名称不符合预期: {self.input_names}")
+
+    obs_input = self.session.get_inputs()[0]
+    obs_dim = obs_input.shape[-1]
+    if isinstance(obs_dim, int) and obs_dim != ACTOR_OBSERVATION_DIM:
+      raise ValueError(
+        f"ONNX obs 维度为 {obs_dim}，"
+        f"当前脚本要求 {ACTOR_OBSERVATION_DIM}。"
+      )
 
     self.scene = Scene(
       SceneCfg(
@@ -173,9 +207,8 @@ class F1Sim2Sim:
 
     self._build_indices()
     self.imu_ang_vel_slice = _sensor_slice(self.model, "imu_ang_vel")
-    self.imu_lin_vel_slice = _sensor_slice(self.model, "imu_lin_vel")
 
-    zero_obs = np.zeros((1, 775), dtype=np.float32)
+    zero_obs = np.zeros((1, ACTOR_OBSERVATION_DIM), dtype=np.float32)
     self.reference0 = self._run_onnx(zero_obs, 0)
     self._reset_to_reference(self.reference0)
     mujoco.mj_forward(self.model, self.data)
@@ -211,8 +244,11 @@ class F1Sim2Sim:
     self.root_joint_id = mujoco.mj_name2id(
       self.model, mujoco.mjtObj.mjOBJ_JOINT, f"{ROBOT_PREFIX}floating_base_joint"
     )
+    if self.root_joint_id < 0:
+      raise KeyError("模型中未找到 floating_base_joint。")
     self.root_qadr = int(self.model.jnt_qposadr[self.root_joint_id])
     self.root_dadr = int(self.model.jnt_dofadr[self.root_joint_id])
+    self.root_body_id = int(self.model.jnt_bodyid[self.root_joint_id])
 
     ctrl_for_policy_joint = np.empty(len(self.joint_names), dtype=np.int32)
     joint_name_to_policy_index = {
@@ -259,7 +295,7 @@ class F1Sim2Sim:
 
   def _term_with_history(self, name: str, value: np.ndarray) -> np.ndarray:
     value = value.astype(np.float32, copy=False).reshape(-1)
-    if name not in  self.term_history:
+    if name not in self.term_history:
       self.term_history[name] = deque(
         (value.copy() for _ in range(self.history_length)),
         maxlen=self.history_length,
@@ -269,46 +305,51 @@ class F1Sim2Sim:
     return np.concatenate(tuple(self.term_history[name]), axis=0)
 
   def _make_obs(self, reference: dict[str, np.ndarray]) -> np.ndarray:
+    # 参考命令由当前参考帧的 28 维关节角和 28 维关节速度组成。
     motion_joint_pos = reference["joint_pos"][0].astype(np.float32)
     motion_joint_vel = reference["joint_vel"][0].astype(np.float32)
     command = np.concatenate((motion_joint_pos, motion_joint_vel), axis=0)
 
-    robot_anchor_pos = self.data.xpos[self.anchor_body_id].copy()
-    robot_anchor_quat = self.data.xquat[self.anchor_body_id].copy()
-    motion_anchor_pos = reference["body_pos_w"][0, self.anchor_body_index]
-    motion_anchor_quat = reference["body_quat_w"][0, self.anchor_body_index]
-    anchor_pos_b, anchor_quat_b = _relative_transform(
-      robot_anchor_pos,
-      robot_anchor_quat,
-      motion_anchor_pos,
-      motion_anchor_quat,
-    )
-    anchor_ori_b = _first_two_rotation_columns(anchor_quat_b)
+    # 将世界坐标系的单位重力方向投影到 pelvis 局部坐标系。
+    root_quat_w = self.data.xquat[self.root_body_id].astype(np.float32)
+    projected_gravity = _quat_apply_inverse(
+      root_quat_w,
+      GRAVITY_VECTOR_W,
+    ).astype(np.float32)
 
     joint_pos = self.data.qpos[self.joint_qadr].astype(np.float32)
     joint_vel = self.data.qvel[self.joint_dadr].astype(np.float32)
     terms = {
       "command": command,
-      "motion_anchor_pos_b": anchor_pos_b.astype(np.float32),
-      "motion_anchor_ori_b": anchor_ori_b,
-      "base_lin_vel": self.data.sensordata[self.imu_lin_vel_slice].astype(np.float32),
-      "base_ang_vel": self.data.sensordata[self.imu_ang_vel_slice].astype(np.float32),
+      "projected_gravity": projected_gravity,
+      "base_ang_vel": self.data.sensordata[
+        self.imu_ang_vel_slice
+      ].astype(np.float32),
       "joint_pos": joint_pos - self.default_joint_pos,
       "joint_vel": joint_vel,
       "actions": self.last_action,
     }
+
+    # 严格按照 ONNX metadata 中的观测顺序拼接，每项内部为旧帧到新帧。
     obs = np.concatenate(
-      [self._term_with_history(name, value) for name, value in terms.items()],
+      [
+        self._term_with_history(name, terms[name])
+        for name in self.observation_names
+      ],
       axis=0,
     )
-    if obs.shape != (775,):
-      raise RuntimeError(f"期望观测形状为 (775,)，实际为 {obs.shape}")
+    if obs.shape != (ACTOR_OBSERVATION_DIM,):
+      term_shapes = {name: terms[name].shape for name in self.observation_names}
+      raise RuntimeError(
+        f"期望观测形状为 ({ACTOR_OBSERVATION_DIM},)，"
+        f"实际为 {obs.shape}，单帧观测形状为 {term_shapes}"
+      )
     return obs[None, :]
 
   def step(
     self, control_step: int, decimation: int
   ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
-    reference = self._run_onnx(np.zeros((1, 775), dtype=np.float32), control_step)
+    reference = self._run_onnx(np.zeros((1, ACTOR_OBSERVATION_DIM), dtype=np.float32), control_step)
     obs = self._make_obs(reference)
     policy_out = self._run_onnx(obs, control_step)
     action = policy_out["actions"][0].astype(np.float32)
