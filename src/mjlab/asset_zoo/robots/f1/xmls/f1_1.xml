@@ -93,14 +93,14 @@
                   <inertial pos="0.0510876 0.00023922 -0.00447269" quat="0 0.707107 0 0.707107" mass="0.411" diaginertia="0.00047916 0.00047226 9.993e-05"/>
                   <joint name="left_ankle_roll_joint" pos="0 0 0" axis="1 0 0" range="-0.5236 0.5236"/>
                   <geom class="visual" material="black" mesh="left_ankle_roll_link"/>
-                  <geom name="left_foot1_collision" class="foot_capsule" fromto="0.1 -0.026 -0.025 0.05 -0.027 -0.025"/>
-                  <geom name="left_foot2_collision" class="foot_capsule" fromto="-0.044 -0.018 -0.025 0.123 -0.018 -0.025"/>
-                  <geom name="left_foot3_collision" class="foot_capsule" fromto="-0.052 -0.01 -0.025 0.13 -0.01 -0.025"/>
-                  <geom name="left_foot4_collision" class="foot_capsule" fromto="-0.054 0 -0.025 0.132 0 -0.025"/>
-                  <geom name="left_foot5_collision" class="foot_capsule" fromto="-0.052 0.01 -0.025 0.13 0.01 -0.025"/>
-                  <geom name="left_foot6_collision" class="foot_capsule" fromto="-0.044 0.018 -0.025 0.123 0.018 -0.025"/>
-                  <geom name="left_foot7_collision" class="foot_capsule" fromto="0.1 0.026 -0.025 0.05 0.026 -0.025"/>
-                  <site name="left_foot" rgba="1 0 0 1" pos="0.02 0 -0.01"/>
+                  <geom name="left_foot1_collision" type="capsule" size="0.01" fromto="0.13 -0.036 -0.026 0.03 -0.036 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="left_foot2_collision" type="capsule" size="0.01" fromto="-0.055 -0.024 -0.026 0.145 -0.024 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="left_foot3_collision" type="capsule" size="0.01" fromto="-0.066 -0.012 -0.026 0.150 -0.012 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="left_foot4_collision" type="capsule" size="0.01" fromto="-0.066 0.000 -0.026 0.150 0.000 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="left_foot5_collision" type="capsule" size="0.01" fromto="-0.066 0.012 -0.026 0.150 0.012 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="left_foot6_collision" type="capsule" size="0.01" fromto="-0.055 0.024 -0.026 0.145 0.024 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="left_foot7_collision" type="capsule" size="0.01" fromto="0.13 0.036 -0.026 0.03 0.036 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <site name="left_foot" rgba="1 0 0 1" pos="0.04 0 -0.035"/>
                 </body>
               </body>
             </body>
@@ -134,14 +134,14 @@
                   <inertial pos="0.0510876 0.00023921 -0.00447269" quat="0 0.707107 0 0.707107" mass="0.411" diaginertia="0.00047916 0.00047226 9.993e-05"/>
                   <geom class="visual" material="black" mesh="right_ankle_roll_link"/>
                   <joint name="right_ankle_roll_joint" pos="0 0 0" axis="1 0 0" range="-0.5236 0.5236" actuatorfrcrange="-12 12"/>
-                  <geom name="right_foot1_collision" class="foot_capsule" fromto="0.1 -0.026 -0.025 0.05 -0.026 -0.025"/>
-                  <geom name="right_foot2_collision" class="foot_capsule" fromto="-0.044 -0.018 -0.025 0.123 -0.018 -0.025"/>
-                  <geom name="right_foot3_collision" class="foot_capsule" fromto="-0.052 -0.01 -0.025 0.13 -0.01 -0.025"/>
-                  <geom name="right_foot4_collision" class="foot_capsule" fromto="-0.054 0 -0.025 0.132 0 -0.025"/>
-                  <geom name="right_foot5_collision" class="foot_capsule" fromto="-0.052 0.01 -0.025 0.13 0.01 -0.025"/>
-                  <geom name="right_foot6_collision" class="foot_capsule" fromto="-0.044 0.018 -0.025 0.123 0.018 -0.025"/>
-                  <geom name="right_foot7_collision" class="foot_capsule" fromto="0.1 0.026 -0.025 0.05 0.026 -0.025"/>
-                  <site name="right_foot" rgba="1 0 0 1" pos="0.02 0 -0.01"/>
+                  <geom name="right_foot1_collision" type="capsule" size="0.01" fromto="0.13 -0.036 -0.026 0.03 -0.036 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="right_foot2_collision" type="capsule" size="0.01" fromto="-0.055 -0.024 -0.026 0.145 -0.024 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="right_foot3_collision" type="capsule" size="0.01" fromto="-0.066 -0.012 -0.026 0.150 -0.012 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="right_foot4_collision" type="capsule" size="0.01" fromto="-0.066 0.000 -0.026 0.150 0.000 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="right_foot5_collision" type="capsule" size="0.01" fromto="-0.066 0.012 -0.026 0.150 0.012 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="right_foot6_collision" type="capsule" size="0.01" fromto="-0.055 0.024 -0.026 0.145 0.024 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <geom name="right_foot7_collision" type="capsule" size="0.01" fromto="0.13 0.036 -0.026 0.03 0.036 -0.026" rgba="0.75294 0.75294 0.75294 1"/>
+                  <site name="right_foot" rgba="1 0 0 1" pos="0.04 0 -0.035"/>
                 </body>
               </body>
             </body>
