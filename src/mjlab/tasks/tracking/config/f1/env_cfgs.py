@@ -49,10 +49,7 @@ def f1_flat_tracking_env_cfg(
   joint_pos_action = cfg.actions["joint_pos"]
   assert isinstance(joint_pos_action, JointPositionActionCfg)
   joint_pos_action.scale = {
-    **F1_ACTION_SCALE,
-    ".*_hip_pitch_joint": F1_ACTION_SCALE[".*_hip_pitch_joint"] * 4.0,
-    ".*_knee_joint": F1_ACTION_SCALE[".*_knee_joint"] * 4.0,
-    ".*_ankle_pitch_joint": F1_ACTION_SCALE[".*_ankle_pitch_joint"] * 2.0,
+    **F1_ACTION_SCALE
   }
 
   motion_cmd = cfg.commands["motion"]
