@@ -234,7 +234,7 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
     "action_rate_l2": RewardTermCfg(func=mdp.action_rate_l2, weight=-1e-1),
     "joint_limit": RewardTermCfg(
       func=mdp.joint_pos_limits,
-      weight=-2.0,
+      weight=-5.0,
       params={"asset_cfg": SceneEntityCfg("robot", joint_names=(".*",))},
     ),
     "self_collisions": RewardTermCfg(
@@ -249,7 +249,7 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
     ),
     "motion_joint_pos": RewardTermCfg(
       func=mdp.motion_joint_position_error_exp,
-      weight=2.0,
+      weight=1.0,
       params={"command_name": "motion", "std": 0.5},
     ),
   }
