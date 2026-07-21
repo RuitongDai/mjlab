@@ -188,8 +188,7 @@ class F1Sim2Sim:
     obs_dim = obs_input.shape[-1]
     if isinstance(obs_dim, int) and obs_dim != ACTOR_OBSERVATION_DIM:
       raise ValueError(
-        f"ONNX obs 维度为 {obs_dim}，"
-        f"当前脚本要求 {ACTOR_OBSERVATION_DIM}。"
+        f"ONNX obs 维度为 {obs_dim}，当前脚本要求 {ACTOR_OBSERVATION_DIM}。"
       )
 
     self.scene = Scene(
@@ -322,9 +321,7 @@ class F1Sim2Sim:
     terms = {
       "command": command,
       "projected_gravity": projected_gravity,
-      "base_ang_vel": self.data.sensordata[
-        self.imu_ang_vel_slice
-      ].astype(np.float32),
+      "base_ang_vel": self.data.sensordata[self.imu_ang_vel_slice].astype(np.float32),
       "joint_pos": joint_pos - self.default_joint_pos,
       "joint_vel": joint_vel,
       "actions": self.last_action,
@@ -332,10 +329,7 @@ class F1Sim2Sim:
 
     # 严格按照 ONNX metadata 中的观测顺序拼接，每项内部为旧帧到新帧。
     obs = np.concatenate(
-      [
-        self._term_with_history(name, terms[name])
-        for name in self.observation_names
-      ],
+      [self._term_with_history(name, terms[name]) for name in self.observation_names],
       axis=0,
     )
     if obs.shape != (ACTOR_OBSERVATION_DIM,):
@@ -349,7 +343,9 @@ class F1Sim2Sim:
   def step(
     self, control_step: int, decimation: int
   ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
-    reference = self._run_onnx(np.zeros((1, ACTOR_OBSERVATION_DIM), dtype=np.float32), control_step)
+    reference = self._run_onnx(
+      np.zeros((1, ACTOR_OBSERVATION_DIM), dtype=np.float32), control_step
+    )
     obs = self._make_obs(reference)
     policy_out = self._run_onnx(obs, control_step)
     action = policy_out["actions"][0].astype(np.float32)

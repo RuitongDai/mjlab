@@ -330,9 +330,7 @@ def validate_robot_joints(
   matched_names = [robot.joint_names[i] for i in robot_joint_indexes]
   if matched_names != joint_names:
     raise RuntimeError(
-      "F1 关节顺序匹配异常。\n"
-      f"期望顺序：{joint_names}\n"
-      f"实际顺序：{matched_names}"
+      f"F1 关节顺序匹配异常。\n期望顺序：{joint_names}\n实际顺序：{matched_names}"
     )
 
   print("\n===== F1 关节检查通过 =====")

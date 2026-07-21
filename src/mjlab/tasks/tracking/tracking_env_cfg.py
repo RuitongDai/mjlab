@@ -231,7 +231,7 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
       weight=1.0,
       params={"command_name": "motion", "std": 3.14},
     ),
-    "action_rate_l2": RewardTermCfg(func=mdp.action_rate_l2, weight=-1e-1),
+    "action_rate_l2": RewardTermCfg(func=mdp.action_rate_l2, weight=-0.1),
     "joint_limit": RewardTermCfg(
       func=mdp.joint_pos_limits,
       weight=-5.0,
@@ -247,11 +247,11 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
       weight=3.0,
       params={"command_name": "motion", "std": 0.15},
     ),
-    "motion_joint_pos": RewardTermCfg(
-      func=mdp.motion_joint_position_error_exp,
-      weight=1.0,
-      params={"command_name": "motion", "std": 0.5},
-    ),
+    # "motion_joint_pos": RewardTermCfg(
+    #   func=mdp.motion_joint_position_error_exp,
+    #   weight=1.0,
+    #   params={"command_name": "motion", "std": 0.5},
+    # ),
   }
 
   ##
