@@ -231,10 +231,10 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
       weight=1.0,
       params={"command_name": "motion", "std": 3.14},
     ),
-    "action_rate_l2": RewardTermCfg(func=mdp.action_rate_l2, weight=-0.15),
+    "action_rate_l2": RewardTermCfg(func=mdp.action_rate_l2, weight=-0.1),
     "joint_limit": RewardTermCfg(
       func=mdp.joint_pos_limits,
-      weight=-5.0,
+      weight=-10.0,
       params={"asset_cfg": SceneEntityCfg("robot", joint_names=(".*",))},
     ),
     "self_collisions": RewardTermCfg(
@@ -243,29 +243,11 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
       params={"sensor_name": "self_collision", "force_threshold": 10.0},
     ),
 
-
-    "motion_anchor_height": RewardTermCfg(
-      func=mdp.motion_anchor_height_error_exp,
-      weight=3.0,
-      params={"command_name": "motion", "std": 0.15},
-    ),
-    "motion_joint_pos": RewardTermCfg(
-      func=mdp.motion_joint_position_error_exp,
-      weight=0.5,
-      params={"command_name": "motion", "std": 0.5},
-    ),
-    "motion_feet_pos": RewardTermCfg(
-      func=mdp.motion_relative_body_position_error_exp,
-      weight=2.0,
-      params={
-        "command_name": "motion",
-        "std": 0.12,
-        "body_names": (
-          "left_ankle_roll_link",
-          "right_ankle_roll_link",
-        ),
-      },
-    ),
+    # "motion_anchor_height": RewardTermCfg(
+    #   func=mdp.motion_anchor_height_error_exp,
+    #   weight=3.0,
+    #   params={"command_name": "motion", "std": 0.15},
+    # ),
   }
 
   ##
