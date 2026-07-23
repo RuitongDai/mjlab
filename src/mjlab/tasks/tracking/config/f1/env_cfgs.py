@@ -13,6 +13,7 @@ from mjlab.tasks.tracking.mdp import MotionCommandCfg
 from mjlab.tasks.tracking.tracking_env_cfg import make_tracking_env_cfg
 from mjlab.envs import mdp as envs_mdp
 from mjlab.managers.event_manager import EventTermCfg
+from mjlab.managers.scene_entity_config import SceneEntityCfg
 
 
 def f1_flat_tracking_env_cfg(
@@ -33,6 +34,19 @@ def f1_flat_tracking_env_cfg(
   cfg.events["reset_scene_to_default"] = EventTermCfg(
     func=envs_mdp.reset_scene_to_default,
     mode="reset",
+  )
+  cfg.events["randomize_chair_height"] = EventTermCfg(
+    func=envs_mdp.reset_root_state_uniform,
+    mode="reset",
+    params={
+      "asset_cfg": SceneEntityCfg("chair"),
+      "pose_range": {
+      "x": (-0.02, 0.02),
+      "y": (-0.02, 0.02),
+      "z": (-0.04, 0.03),
+      "yaw": (-0.05, 0.05),
+      },
+    },
   )
 
   self_collision_cfg = ContactSensorCfg(
