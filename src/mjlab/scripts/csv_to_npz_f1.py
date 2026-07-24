@@ -552,7 +552,7 @@ def main(
   output_file: str = "/tmp/f1_motion.npz",
   render: bool = False,
   line_range: tuple[int, int] | None = None,
-  upload_wandb: bool = True,
+  upload_wandb: bool = False,
   wandb_project: str = "csv_to_npz",
   env_cfg_module: str = "mjlab.tasks.tracking.config.f1.env_cfgs",
   env_cfg_func: str = "f1_flat_tracking_env_cfg",

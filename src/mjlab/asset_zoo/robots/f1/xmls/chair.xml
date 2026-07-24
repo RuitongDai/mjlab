@@ -13,7 +13,7 @@
   <worldbody>
 
     <body name="chair" pos="0 0.03 0" quat="1 0 0 0">
-      <geom name="seat" type="box" size="0.15 0.20 0.02" pos="0 0 0.42" material="chair_seat"/>
+      <geom name="seat" type="box" size="0.15 0.20 0.02" pos="0 0 0.38" material="chair_seat"/>
       <geom name="back_rest" type="box" size="0.025 0.22 0.28" pos="-0.17 0 0.64" material="chair_seat"/>
     </body>
 

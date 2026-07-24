@@ -27,3 +27,6 @@ from mjlab.asset_zoo.robots.f1.f1_constants import (
 from mjlab.asset_zoo.robots.f1.f1_constants import (
   get_chair_cfg as get_chair_cfg,
 )
+from mjlab.asset_zoo.robots.f1.f1_constants import (
+  get_f1_getup_robot_cfg as get_f1_getup_robot_cfg,
+)

@@ -129,7 +129,7 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
   ##
   # Commands
   ##
-
+  # 参考动作的随机化
   commands: dict[str, CommandTermCfg] = {
     "motion": MotionCommandCfg(
       entity_name="robot",
@@ -170,12 +170,12 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
         "asset_cfg": SceneEntityCfg("robot", body_names=()),  # Set in robot cfg.
         "operation": "add",
         "ranges": {
-          0: (-0.05, 0.05),
+          0: (-0.025, 0.025),
           1: (-0.05, 0.05),
           2: (-0.05, 0.05),
         },
       },
-    ),
+    ), 
     "encoder_bias": EventTermCfg(
       mode="startup",
       func=dr.encoder_bias,
@@ -242,12 +242,6 @@ def make_tracking_env_cfg() -> ManagerBasedRlEnvCfg:
       weight=-10.0,
       params={"sensor_name": "self_collision", "force_threshold": 10.0},
     ),
-
-    # "motion_anchor_height": RewardTermCfg(
-    #   func=mdp.motion_anchor_height_error_exp,
-    #   weight=3.0,
-    #   params={"command_name": "motion", "std": 0.15},
-    # ),
   }
 
   ##

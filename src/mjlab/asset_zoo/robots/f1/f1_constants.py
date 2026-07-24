@@ -146,6 +146,42 @@ SITTING_ON_CHAIR_KEYFRAME = EntityCfg.InitialStateCfg(
   joint_vel={".*": 0.0},
 )
 
+GETUP_KEYFRAME = EntityCfg.InitialStateCfg(
+  pos=(0.599626, -1.914662, 0.003215),
+  rot=(0.747531, -0.147777, -0.640868, -0.092994),
+  joint_pos={
+    "left_hip_pitch_joint": -0.217342,
+    "left_hip_roll_joint": 0.086355,
+    "left_hip_yaw_joint": 0.306269,
+    "left_knee_joint": 0.028973,
+    "left_ankle_pitch_joint": -0.023414,
+    "left_ankle_roll_joint": -0.022843,
+    "right_hip_pitch_joint": -0.169299,
+    "right_hip_roll_joint": -0.295199,
+    "right_hip_yaw_joint": -0.405549,
+    "right_knee_joint": 0.053706,
+    "right_ankle_pitch_joint": -0.019386,
+    "right_ankle_roll_joint": 0.009653,
+    "waist_yaw_joint": -0.141806,
+    "waist_roll_joint": -0.046892,
+    "left_shoulder_pitch_joint": 0.293124,
+    "left_shoulder_roll_joint": 1.101010,
+    "left_shoulder_yaw_joint": 0.254477,
+    "left_elbow_joint": 0.544983,
+    "left_wrist_roll_joint": 0.138482,
+    "left_wrist_yaw_joint": 0.110502,
+    "left_wrist_pitch_joint": 0.270438,
+    "right_shoulder_pitch_joint": 0.189029,
+    "right_shoulder_roll_joint": -1.169244,
+    "right_shoulder_yaw_joint": -0.371535,
+    "right_elbow_joint": 0.523972,
+    "right_wrist_roll_joint": 0.121421,
+    "right_wrist_yaw_joint": -0.320898,
+    "right_wrist_pitch_joint": 0.236695,
+  },
+  joint_vel={".*": 0.0},
+)
+
 CHAIR_KEYFRAME = EntityCfg.InitialStateCfg(
   pos=(0.0, 0.0, 0.0),
   rot=(0.7071068, 0.0, 0.0, -0.7071068),
@@ -180,6 +216,28 @@ FEET_ONLY_COLLISION = CollisionCfg(
   condim=3,
   priority=1,
   friction=(0.6,),
+)
+
+GETUP_SUPPORT_GEOMS = (
+  r"^(left|right)_foot[1-7]_collision$",
+  r"^(left|right)_hand_collision$",
+  r"^(left|right)_wrist_collision$",
+  r"^(left|right)_elbow_yaw_collision$",
+  r"^(left|right)_shin_collision$",
+  r"^(left|right)_thigh_collision$",
+  r"^pelvis_collision$",
+  r"^torso_collision$",
+)
+GETUP_FULL_COLLISION = CollisionCfg(
+  geom_names_expr=(".*_collision",),
+  contype=0,
+  conaffinity=1,
+  condim={
+    **{name: 3 for name in GETUP_SUPPORT_GEOMS},
+    ".*_collision": 1,
+  },
+  priority={name: 1 for name in GETUP_SUPPORT_GEOMS},
+  friction={name: (0.8,) for name in GETUP_SUPPORT_GEOMS},
 )
 
 ##
@@ -217,6 +275,14 @@ def get_chair_cfg() -> EntityCfg:
   return EntityCfg(
     init_state=CHAIR_KEYFRAME,
     spec_fn=get_chair_spec,
+  )
+
+def get_f1_getup_robot_cfg() -> EntityCfg:
+  return EntityCfg(
+    init_state= GETUP_KEYFRAME,
+    collisions=(GETUP_FULL_COLLISION,),
+    spec_fn=get_spec,
+    articulation=F1_ARTICULATION,
   )
 
 

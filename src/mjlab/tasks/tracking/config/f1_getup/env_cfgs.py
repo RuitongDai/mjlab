@@ -1,0 +1,139 @@
+""" f1 getup tracking environment configurations."""
+
+from mjlab.asset_zoo.robots import (
+  F1_ACTION_SCALE,
+  get_f1_getup_robot_cfg,
+)
+from mjlab.envs import ManagerBasedRlEnvCfg
+from mjlab.envs.mdp.actions import JointPositionActionCfg
+from mjlab.managers.observation_manager import ObservationGroupCfg
+from mjlab.tasks.tracking.mdp import MotionCommandCfg
+from mjlab.tasks.tracking.tracking_env_cfg import make_tracking_env_cfg
+from mjlab.envs import mdp as envs_mdp
+from mjlab.managers.event_manager import EventTermCfg
+from mjlab.managers.reward_manager import RewardTermCfg
+from mjlab.tasks.tracking import mdp
+
+
+def f1_getup_tracking_env_cfg(
+  has_state_estimation: bool = True,
+  play: bool = False,
+) -> ManagerBasedRlEnvCfg:
+
+  cfg = make_tracking_env_cfg()
+
+  cfg.scene.entities = {"robot": get_f1_getup_robot_cfg()}
+
+  # 关闭自碰撞惩罚，避免坐姿/起身初期产生巨大负奖励。
+  cfg.rewards.pop("self_collisions", None)
+
+  # 多环境时必须在 reset event 里按 env_origins 重置 mocap pose
+  cfg.events["reset_scene_to_default"] = EventTermCfg(
+    func=envs_mdp.reset_scene_to_default,
+    mode="reset",
+  )
+
+  joint_pos_action = cfg.actions["joint_pos"]
+  assert isinstance(joint_pos_action, JointPositionActionCfg)
+  joint_pos_action.scale = {**F1_ACTION_SCALE}
+
+  motion_cmd = cfg.commands["motion"]
+  assert isinstance(motion_cmd, MotionCommandCfg)
+  motion_cmd.anchor_body_name = "torso_link"
+  motion_cmd.body_names = (
+    "pelvis",
+    "left_hip_roll_link",
+    "left_knee_link",
+    "left_ankle_roll_link",
+    "right_hip_roll_link",
+    "right_knee_link",
+    "right_ankle_roll_link",
+    "torso_link",
+    "left_shoulder_roll_link",
+    "left_elbow_link",
+    "left_wrist_yaw_link",
+    "right_shoulder_roll_link",
+    "right_elbow_link",
+    "right_wrist_yaw_link",
+  )
+
+  # reset模式设置为第0帧出生
+  motion_cmd.sampling_mode = "start"
+
+  #微调随机化
+  motion_cmd.pose_range = {
+    "x": (-0.03, 0.03),
+    "y": (-0.03, 0.03),
+    "z": (-0.005, 0.005),
+    "roll": (-0.03, 0.03),
+    "pitch": (-0.03, 0.03),
+    "yaw": (-0.05, 0.05),
+  }
+  motion_cmd.velocity_range = {
+    "x": (-0.1, 0.1),
+    "y": (-0.1, 0.1),
+    "z": (-0.05, 0.05),
+    "roll": (-0.1, 0.1),
+    "pitch": (-0.1, 0.1),
+    "yaw": (-0.15, 0.15),
+  }
+  motion_cmd.joint_position_range = (-0.03, 0.03)
+
+  cfg.events["foot_friction"].params[
+    "asset_cfg"
+  ].geom_names = r"^(left|right)_foot[1-7]_collision$"
+  cfg.events["base_com"].params["asset_cfg"].body_names = ("torso_link",)
+
+  # 奖励
+  cfg.rewards["motion_anchor_height"] = RewardTermCfg(
+    func=mdp.motion_anchor_height_error_exp,
+    weight=2.0,
+    params={"command_name": "motion", "std": 0.15},
+  )
+  cfg.rewards["motion_joint_pos"] = RewardTermCfg(
+    func=mdp.motion_joint_position_error_exp,
+    weight=0.5,
+    params={"command_name": "motion", "std": 0.5},
+  )
+
+  cfg.terminations["ee_body_pos"].params["body_names"] = (
+    "left_ankle_roll_link",
+    "right_ankle_roll_link",
+    "left_wrist_yaw_link",
+    "right_wrist_yaw_link",
+  )
+  # 放宽terminations条件
+  cfg.terminations["anchor_pos"].params["threshold"] = 1.2
+  cfg.terminations["anchor_ori"].params["threshold"] = 2.0
+  cfg.terminations["ee_body_pos"].params["threshold"] = 1.2
+
+  cfg.viewer.body_name = "torso_link"
+
+  if not has_state_estimation:
+    new_actor_terms = {
+      k: v
+      for k, v in cfg.observations["actor"].terms.items()
+      if k not in ["motion_anchor_pos_b", "base_lin_vel"]
+    }
+    cfg.observations["actor"] = ObservationGroupCfg(
+      terms=new_actor_terms,
+      concatenate_terms=True,
+      enable_corruption=True,
+    )
+
+  # Apply play mode overrides.
+  if play:
+    # Effectively infinite episode length.
+    cfg.episode_length_s = int(1e9)
+
+    cfg.observations["actor"].enable_corruption = False
+    cfg.events.pop("push_robot", None)
+
+    # Disable RSI randomization.
+    motion_cmd.pose_range = {}
+    motion_cmd.velocity_range = {}
+    motion_cmd.joint_position_range = (0.0, 0.0)
+
+    motion_cmd.sampling_mode = "start"
+
+  return cfg
