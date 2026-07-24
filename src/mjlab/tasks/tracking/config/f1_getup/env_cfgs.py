@@ -84,17 +84,17 @@ def f1_getup_tracking_env_cfg(
   ].geom_names = r"^(left|right)_foot[1-7]_collision$"
   cfg.events["base_com"].params["asset_cfg"].body_names = ("torso_link",)
 
-  # 奖励
-  cfg.rewards["motion_anchor_height"] = RewardTermCfg(
-    func=mdp.motion_anchor_height_error_exp,
-    weight=2.0,
-    params={"command_name": "motion", "std": 0.15},
-  )
-  cfg.rewards["motion_joint_pos"] = RewardTermCfg(
-    func=mdp.motion_joint_position_error_exp,
-    weight=0.5,
-    params={"command_name": "motion", "std": 0.5},
-  )
+  # # 奖励
+  # cfg.rewards["motion_anchor_height"] = RewardTermCfg(
+  #   func=mdp.motion_anchor_height_error_exp,
+  #   weight=2.0,
+  #   params={"command_name": "motion", "std": 0.15},
+  # )
+  # cfg.rewards["motion_joint_pos"] = RewardTermCfg(
+  #   func=mdp.motion_joint_position_error_exp,
+  #   weight=0.5,
+  #   params={"command_name": "motion", "std": 0.5},
+  # )
 
   cfg.terminations["ee_body_pos"].params["body_names"] = (
     "left_ankle_roll_link",
