@@ -1,3 +1,7 @@
+"""
+python src/mjlab/scripts/csv_to_npz_f1.py --input_file datasets/csv/getup1.csv --output_name getup1.npz --output_file datasets/npz/getup1.npz
+"""
+
 from __future__ import annotations
 
 import importlib
