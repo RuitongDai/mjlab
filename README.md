@@ -77,7 +77,7 @@ uv run python -m mjlab.scripts.play Mjlab-Tracking-Flat-F1 --agent trained --che
 Use built-in agents to sanity check your MDP before training:
 
 ```bash
-uv run play Mjlab-Tracking-Flat-F1 --agent zero --motion-file datasets/npz/standup_f1.npz --viewer native --no-terminations True
+uv run play Mjlab-Tracking-Getup-F1 --agent zero --motion-file datasets/npz/getup_stand.npz --viewer native --no-terminations True
 uv run play Mjlab-Your-Task-Id --agent random  # Sends uniform random actions
 ```
 
