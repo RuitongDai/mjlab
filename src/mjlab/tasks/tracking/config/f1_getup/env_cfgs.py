@@ -60,24 +60,24 @@ def f1_getup_tracking_env_cfg(
   # reset模式设置为第0帧出生
   motion_cmd.sampling_mode = "start"
 
-  # #微调随机化
-  # motion_cmd.pose_range = {
-  #   "x": (-0.03, 0.03),
-  #   "y": (-0.03, 0.03),
-  #   "z": (-0.005, 0.005),
-  #   "roll": (-0.03, 0.03),
-  #   "pitch": (-0.03, 0.03),
-  #   "yaw": (-0.05, 0.05),
-  # }
-  # motion_cmd.velocity_range = {
-  #   "x": (-0.1, 0.1),
-  #   "y": (-0.1, 0.1),
-  #   "z": (-0.05, 0.05),
-  #   "roll": (-0.1, 0.1),
-  #   "pitch": (-0.1, 0.1),
-  #   "yaw": (-0.15, 0.15),
-  # }
-  # motion_cmd.joint_position_range = (-0.03, 0.03)
+  #一开始学减小随机化
+  motion_cmd.pose_range = {
+    "x": (-0.03, 0.03),
+    "y": (-0.03, 0.03),
+    "z": (-0.005, 0.005),
+    "roll": (-0.03, 0.03),
+    "pitch": (-0.03, 0.03),
+    "yaw": (-0.05, 0.05),
+  }
+  motion_cmd.velocity_range = {
+    "x": (-0.1, 0.1),
+    "y": (-0.1, 0.1),
+    "z": (-0.05, 0.05),
+    "roll": (-0.1, 0.1),
+    "pitch": (-0.1, 0.1),
+    "yaw": (-0.15, 0.15),
+  }
+  motion_cmd.joint_position_range = (-0.03, 0.03)
 
   cfg.events["foot_friction"].params[
     "asset_cfg"
