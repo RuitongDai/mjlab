@@ -32,10 +32,17 @@ def get_chair_spec() -> mujoco.MjSpec:
 
 
 F1_ACTUATOR_LEGS = BuiltinPositionActuatorCfg(
-  target_names_expr=(".*_hip_yaw_joint", ".*_hip_roll_joint", ".*_knee_joint"),
+  target_names_expr=(".*_hip_yaw_joint", ".*_hip_roll_joint", ),
   stiffness=100.0,
   damping=2.0,
-  effort_limit=75.0,
+  effort_limit=87.0,
+  armature=0.01,
+)
+F1_ACTUATOR_KNEE = BuiltinPositionActuatorCfg(
+  target_names_expr=(".*_knee_joint",),
+  stiffness=100.0,
+  damping=2.0,
+  effort_limit=120.0,
   armature=0.01,
 )
 
@@ -47,11 +54,18 @@ F1_ACTUATOR_LEGS_HIPS_PITCH = BuiltinPositionActuatorCfg(
   armature=0.01,
 )
 
-F1_ACTUATOR_FEET = BuiltinPositionActuatorCfg(
-  target_names_expr=(".*_ankle_pitch_joint", ".*_ankle_roll_joint"),
+F1_ACTUATOR_ANKLE_PITCH = BuiltinPositionActuatorCfg(
+  target_names_expr=(".*_ankle_pitch_joint",),
   stiffness=30.0,
   damping=2.0,
-  effort_limit=75.0,
+  effort_limit=89.0,
+  armature=0.01,
+)
+F1_ACTUATOR_ANKLE_ROLL = BuiltinPositionActuatorCfg(
+  target_names_expr=(".*_ankle_roll_joint",),
+  stiffness=30.0,
+  damping=2.0,
+  effort_limit=12.0,
   armature=0.01,
 )
 
@@ -59,19 +73,27 @@ F1_ACTUATOR_WAIST = BuiltinPositionActuatorCfg(
   target_names_expr=("waist_yaw_joint", "waist_roll_joint"),
   stiffness=100.0,
   damping=2.0,
-  effort_limit=50.0,
+  effort_limit=87.0,
   armature=0.01,
 )
 
-F1_ACTUATOR_SHOULDER = BuiltinPositionActuatorCfg(
+F1_ACTUATOR_SHOULDER_PITCH = BuiltinPositionActuatorCfg(
   target_names_expr=(
     ".*_shoulder_pitch_joint",
+  ),
+  stiffness=30.0,
+  damping=2.0,
+  effort_limit=48.0,
+  armature=0.008,
+)
+F1_ACTUATOR_SHOULDER = BuiltinPositionActuatorCfg(
+  target_names_expr=(
     ".*_shoulder_roll_joint",
     ".*_shoulder_yaw_joint",
   ),
   stiffness=30.0,
   damping=2.0,
-  effort_limit=25.0,
+  effort_limit=84.0,
   armature=0.008,
 )
 
@@ -79,18 +101,26 @@ F1_ACTUATOR_FORE_ARM = BuiltinPositionActuatorCfg(
   target_names_expr=(".*_elbow_joint", ".*_wrist_roll_joint"),
   stiffness=30.0,
   damping=2.0,
-  effort_limit=25.0,
+  effort_limit=37.0,
   armature=0.005,
 )
 
-F1_ACTUATOR_HAND = BuiltinPositionActuatorCfg(
+F1_ACTUATOR_WRIST_YAW = BuiltinPositionActuatorCfg(
   target_names_expr=(
-    ".*_wrist_pitch_joint",
     ".*_wrist_yaw_joint",
   ),
   stiffness=20.0,
   damping=2.0,
-  effort_limit=5.0,
+  effort_limit=20.0,
+  armature=0.005,
+)
+F1_ACTUATOR_WRIST_PITCH = BuiltinPositionActuatorCfg(
+  target_names_expr=(
+    ".*_wrist_pitch_joint",
+  ),
+  stiffness=20.0,
+  damping=2.0,
+  effort_limit=25.0,
   armature=0.005,
 )
 ##
@@ -246,12 +276,16 @@ GETUP_FULL_COLLISION = CollisionCfg(
 F1_ARTICULATION = EntityArticulationInfoCfg(
   actuators=(
     F1_ACTUATOR_LEGS,
+    F1_ACTUATOR_KNEE,
     F1_ACTUATOR_LEGS_HIPS_PITCH,
-    F1_ACTUATOR_FEET,
+    F1_ACTUATOR_ANKLE_PITCH,
+    F1_ACTUATOR_ANKLE_ROLL,
     F1_ACTUATOR_WAIST,
+    F1_ACTUATOR_WRIST_PITCH,
+    F1_ACTUATOR_WRIST_YAW,
     F1_ACTUATOR_SHOULDER,
-    F1_ACTUATOR_FORE_ARM,
-    F1_ACTUATOR_HAND,
+    F1_ACTUATOR_SHOULDER_PITCH,
+    F1_ACTUATOR_FORE_ARM
   ),
   soft_joint_pos_limit_factor=0.9,
 )
