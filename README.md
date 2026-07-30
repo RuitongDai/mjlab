@@ -69,7 +69,7 @@ Train a humanoid to mimic reference motions. See the [motion imitation guide](ht
 
 ```bash
 uv run python -m mjlab.scripts.train Mjlab-Tracking-Flat-F1 --env.commands.motion.motion-file datasets/npz/standup_f1.npz --env.scene.num-envs 4096
-uv run python -m mjlab.scripts.play Mjlab-Tracking-Flat-F1 --agent trained --checkpoint-file  --motion-file datasets/npz/standup_f1.npz --num-envs 1 --viewer native
+uv run python -m mjlab.scripts.play Mjlab-Tracking-Getup-F1 --agent trained --checkpoint-file /home/dai/model_500.pt --motion-file datasets/npz/getup_stand.npz --num-envs 1 --viewer native
 ```
 
 ### 3. Sanity-check with Dummy Agents
